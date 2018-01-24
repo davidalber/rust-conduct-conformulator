@@ -1,0 +1,6 @@
+[package]
+name = "code_of_conduct_conformulator"
+version = "0.1.0"
+authors = ["David Alber <alber.david@gmail.com>"]
+
+[dependencies]
