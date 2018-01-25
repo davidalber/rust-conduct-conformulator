@@ -3,5 +3,6 @@ name = "code_of_conduct_conformulator"
 version = "0.1.0"
 authors = ["David Alber <alber.david@gmail.com>"]
 
-[dev-dependencies]
+[dependencies]
+lazy_static = "1.0.0"
 reqwest = "0.8.4"
