@@ -19,6 +19,24 @@ pub fn fetch(url: &str) -> String {
     resp.text().unwrap()
 }
 
+// This is a brittle function to convert the Rust WWW code of conduct into the
+// code of conduct that should be used in satellite projects.
 pub fn make_expected_satellite() -> String {
-    String::from("foo")
+    let mut expected: Vec<&str> = BASE.split("\n")
+        .skip_while(|l| !l.starts_with("#"))
+        .map(|l| {
+            if l.starts_with("[mod_team]") {
+                "[mod_team]: https://www.rust-lang.org/team.html#Moderation-team"
+            } else {
+                l
+            }
+        })
+        .collect();
+    expected.insert(2, "");
+    expected.insert(
+        2,
+        "A version of this document [can be found online](https://www.rust-lang.org/conduct.html).",
+    );
+
+    expected.join("\n")
 }
