@@ -12,7 +12,10 @@ lazy_static! {
 
 pub fn fetch(url: &str) -> String {
     let mut resp = reqwest::get(url).unwrap();
-    assert!(resp.status().is_success());
+    assert!(
+        resp.status().is_success(),
+        format!("Could not load {}", url)
+    );
     resp.text().unwrap()
 }
 
