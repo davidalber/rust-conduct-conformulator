@@ -14,7 +14,7 @@ pub fn fetch(url: &str) -> String {
     let mut resp = reqwest::get(url).unwrap();
     assert!(
         resp.status().is_success(),
-        format!("Could not load {}", url)
+        format!("Could not fetch {}", url)
     );
     resp.text().unwrap()
 }
