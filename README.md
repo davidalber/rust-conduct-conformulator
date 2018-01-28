@@ -1,0 +1,1 @@
+[![Build Status](https://api.travis-ci.org/davidalber/code-of-conduct-conformulator.svg)](https://travis-ci.org/davidalber/code-of-conduct-conformulator)
