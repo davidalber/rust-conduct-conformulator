@@ -12,7 +12,7 @@ lazy_static! {
     static ref EXPECTED_SATELLITE: String = make_expected_satellite();
 }
 
-fn read_expected(filename: &str) -> String {
+fn read_file(filename: &str) -> String {
     let mut f = File::open(filename).expect("file not found");
 
     let mut contents = String::new();
@@ -23,13 +23,29 @@ fn read_expected(filename: &str) -> String {
 
 #[test]
 fn validate_base_file() {
-    let expected_base = read_expected("tests/expected/base.md");
+    let expected_base = read_file("tests/expected/base.md");
 
     assert!(
         expected_base == *BASE,
         format!(
             "Rust WWW code of conduct ({}) does not match expected value",
             RUST_WWW_CODE_OF_CONDUCT
+        )
+    );
+}
+
+// Test that satellite_code_of_conduct.md (in this repository) matches the
+// current EXPECTED_SATELLITE.
+#[test]
+fn validate_local_satellite_file() {
+    const LOCAL_SATELLITE: &str = "satellite_code_of_conduct.md";
+    let local_satellite = read_file(LOCAL_SATELLITE);
+
+    assert!(
+        local_satellite == *EXPECTED_SATELLITE,
+        format!(
+            "The local satellite file ({}) does not match expected value",
+            LOCAL_SATELLITE
         )
     );
 }
