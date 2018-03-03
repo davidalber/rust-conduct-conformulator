@@ -54,6 +54,7 @@ fn validate_local_satellite_file() {
 fn validate_satellite_files() {
     let urls = vec![
         "https://raw.githubusercontent.com/rust-lang/rust/master/CODE_OF_CONDUCT.md",
+        "https://raw.githubusercontent.com/rust-lang-nursery/rustfmt/master/CODE_OF_CONDUCT.md"
     ];
 
     let failing_urls: Vec<&str> = urls.iter()
