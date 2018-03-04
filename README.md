@@ -7,6 +7,7 @@ This project aims to address the risk of fragmentation by providing cross-reposi
 These tests are intended to cover projects in the [rust-lang](https://github.com/rust-lang), [rust-lang-nursery](https://github.com/rust-lang-nursery/), and [rust-lang-deprecated](https://github.com/rust-lang-deprecated) GitHub organizations. Currently, the following code repositories are covered by the tests.
 
 - [rust-lang/rust](https://github.com/rust-lang/rust) ([code of conduct](https://github.com/rust-lang/rust/blob/master/CODE_OF_CONDUCT.md))
+- [rust-lang-nursery/rustfmt](https://github.com/rust-lang-nursery/rustfmt) ([code of conduct](https://github.com/rust-lang-nursery/rustfmt/blob/master/CODE_OF_CONDUCT.md))
 
 ## Onboarding Repositories
 To add a new repository to the tests, either contact me or author a PR that adds the GitHub raw file URL to the `urls` vector in the `validate_satellite_files` function in [validation_tests.rs](https://github.com/davidalber/rust-conduct-conformulator/blob/master/tests/validation_tests.rs). Be sure to run `cargo test` before creating the PR.
