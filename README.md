@@ -10,7 +10,8 @@ These tests are intended to cover projects in the [rust-lang](https://github.com
 - [rust-lang-nursery/rustfmt](https://github.com/rust-lang-nursery/rustfmt) ([code of conduct](https://github.com/rust-lang-nursery/rustfmt/blob/master/CODE_OF_CONDUCT.md))
 
 ## Onboarding Repositories
-To add a new repository to the tests, either contact me or author a PR that adds the GitHub raw file URL to the `urls` vector in the `validate_satellite_files` function in [validation_tests.rs](https://github.com/davidalber/rust-conduct-conformulator/blob/master/tests/validation_tests.rs). Be sure to run `cargo test` before creating the PR.
+1. To add a new repository to the tests, either contact me or author a PR that adds the GitHub raw file URL to the `urls` vector in the `validate_satellite_files` function in [validation_tests.rs](https://github.com/davidalber/rust-conduct-conformulator/blob/master/tests/validation_tests.rs). Be sure to run `cargo test` before creating the PR.
+1. Add a link to the repository and its code of conduct in the section above.
 
 ## Adding the Rust Code of Conduct to a Project
 The current correct copy of the Code of Conduct for a code repository is in [satellite_code_of_conduct.md](satellite_code_of_conduct.md). If you add that to your repository be sure to [onboard the repository](#onboarding-repositories).
