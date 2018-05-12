@@ -75,7 +75,10 @@ pub struct ProjectRepository {
 
 impl ProjectRepository {
     fn new(conduct_status: ConductStatus, conduct_url: String, name: String) -> ProjectRepository {
-        ProjectRepository { code_of_conduct: CodeOfConductStatus::new(conduct_status, conduct_url), name }
+        ProjectRepository {
+            code_of_conduct: CodeOfConductStatus::new(conduct_status, conduct_url),
+            name,
+        }
     }
 }
 
@@ -83,13 +86,17 @@ pub fn check_repository_conformance() -> Vec<ProjectRepository> {
     let repos = vec![
         "rust-lang/rust",
         "rust-lang-nursery/highfive",
-        "rust-lang-nursery/rustfmt"
+        "rust-lang-nursery/rustfmt",
     ];
     let urlify = |r| {
-        format!("https://raw.githubusercontent.com/{}/master/CODE_OF_CONDUCT.md", r)
+        format!(
+            "https://raw.githubusercontent.com/{}/master/CODE_OF_CONDUCT.md",
+            r
+        )
     };
 
-    repos.iter()
+    repos
+        .iter()
         .map(|r| (r, urlify(r)))
         .map(|(r, u)| match fetch(&u) == *EXPECTED_SATELLITE {
             true => (r, u, ConductStatus::Correct),

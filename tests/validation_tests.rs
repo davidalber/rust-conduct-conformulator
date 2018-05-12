@@ -1,6 +1,7 @@
 extern crate code_of_conduct_conformulator;
 
-use code_of_conduct_conformulator::{check_repository_conformance, ConductStatus, BASE, EXPECTED_SATELLITE, RUST_WWW_CODE_OF_CONDUCT};
+use code_of_conduct_conformulator::{check_repository_conformance, ConductStatus, BASE,
+                                    EXPECTED_SATELLITE, RUST_WWW_CODE_OF_CONDUCT};
 
 use std::fs::File;
 use std::io::Read;
@@ -46,7 +47,8 @@ fn validate_local_satellite_file() {
 #[test]
 fn validate_satellite_files() {
     let conformance = check_repository_conformance();
-    let failing_urls: Vec<&str> = conformance.iter()
+    let failing_urls: Vec<&str> = conformance
+        .iter()
         .filter(|r| r.code_of_conduct.status != ConductStatus::Correct)
         .map(|r| &r.code_of_conduct.url)
         .map(AsRef::as_ref)
