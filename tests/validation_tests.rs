@@ -1,16 +1,9 @@
 extern crate code_of_conduct_conformulator;
 
-#[macro_use]
-extern crate lazy_static;
-
-use code_of_conduct_conformulator::{fetch, make_expected_satellite, BASE, RUST_WWW_CODE_OF_CONDUCT};
+use code_of_conduct_conformulator::{check_repository_conformance, ConductStatus, BASE, EXPECTED_SATELLITE, RUST_WWW_CODE_OF_CONDUCT};
 
 use std::fs::File;
 use std::io::Read;
-
-lazy_static! {
-    static ref EXPECTED_SATELLITE: String = make_expected_satellite();
-}
 
 fn read_file(filename: &str) -> String {
     let mut f = File::open(filename).expect("file not found");
@@ -52,15 +45,11 @@ fn validate_local_satellite_file() {
 
 #[test]
 fn validate_satellite_files() {
-    let urls = vec![
-        "https://raw.githubusercontent.com/rust-lang/rust/master/CODE_OF_CONDUCT.md",
-        "https://raw.githubusercontent.com/rust-lang-nursery/highfive/master/CODE_OF_CONDUCT.md",
-        "https://raw.githubusercontent.com/rust-lang-nursery/rustfmt/master/CODE_OF_CONDUCT.md"
-    ];
-
-    let failing_urls: Vec<&str> = urls.iter()
-        .filter(|u| fetch(u) != *EXPECTED_SATELLITE)
-        .map(|u| *u)
+    let conformance = check_repository_conformance();
+    let failing_urls: Vec<&str> = conformance.iter()
+        .filter(|r| r.code_of_conduct.status != ConductStatus::Correct)
+        .map(|r| &r.code_of_conduct.url)
+        .map(AsRef::as_ref)
         .collect();
 
     assert!(
