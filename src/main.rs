@@ -29,6 +29,8 @@ fn main() -> Result<(), Error> {
             }
             _ => eprintln!("Task argument (conduct | conformance) required."),
         }
+    } else {
+        eprintln!("Task argument (conduct | conformance) required.");
     }
 
     Ok(())
