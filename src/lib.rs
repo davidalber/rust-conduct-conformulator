@@ -1,5 +1,3 @@
-#![feature(assoc_unix_epoch)]
-
 extern crate reqwest;
 extern crate serde;
 
@@ -110,7 +108,7 @@ impl ConformanceReport {
         ConformanceReport {
             repositories,
             created_on: SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
+                .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
                 .as_secs(),
         }
