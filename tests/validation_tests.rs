@@ -46,8 +46,14 @@ fn validate_local_satellite_file() {
 
 #[test]
 fn validate_satellite_files() {
-    let conformance = check_repository_conformance();
+    let repos = vec![
+        "rust-lang/rust",
+        "rust-lang-nursery/highfive",
+        "rust-lang-nursery/rustfmt",
+    ];
+    let conformance = check_repository_conformance(&repos.iter().map(|u| u.to_string()).collect());
     let failing_urls: Vec<&str> = conformance
+        .repositories
         .iter()
         .filter(|r| r.code_of_conduct.status != ConductStatus::Correct)
         .map(|r| &r.code_of_conduct.url)

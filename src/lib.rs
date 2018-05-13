@@ -1,3 +1,5 @@
+#![feature(assoc_unix_epoch)]
+
 extern crate reqwest;
 extern crate serde;
 
@@ -7,23 +9,29 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+use std::time::SystemTime;
+
 pub const RUST_WWW_CODE_OF_CONDUCT: &str =
     "https://raw.githubusercontent.com/rust-lang/rust-www/master/en-US/conduct.md";
 
 lazy_static! {
-    pub static ref BASE: String = fetch(RUST_WWW_CODE_OF_CONDUCT);
+    pub static ref BASE: String = fetch(RUST_WWW_CODE_OF_CONDUCT).unwrap();
 }
 lazy_static! {
     pub static ref EXPECTED_SATELLITE: String = make_expected_satellite();
 }
 
-pub fn fetch(url: &str) -> String {
+pub fn fetch(url: &str) -> Result<String, reqwest::StatusCode> {
     let mut resp = reqwest::get(url).unwrap();
+    if !resp.status().is_success() {
+        return Err(resp.status());
+    }
     assert!(
         resp.status().is_success(),
         format!("Could not fetch {}", url)
     );
-    resp.text().unwrap()
+    let body = resp.text().unwrap();
+    Ok(body)
 }
 
 // This is a brittle function to convert the Rust WWW code of conduct into the
@@ -48,11 +56,20 @@ pub fn make_expected_satellite() -> String {
     expected.join("\n")
 }
 
+pub fn get_org_repositories(org: &str) -> Vec<String> {
+    let urlify = |o| format!("https://api.github.com/orgs/{}/repos", o);
+    let json: Vec<Repository> = reqwest::get(&urlify(org)).unwrap().json().unwrap();
+    json.into_iter()
+        .map(|r| format!("{}/{}", org, r.name))
+        .collect()
+}
+
 #[derive(Serialize, Deserialize, PartialEq)]
 pub enum ConductStatus {
     Correct,
     Incorrect,
     Missing,
+    Unknown,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -82,12 +99,25 @@ impl ProjectRepository {
     }
 }
 
-pub fn check_repository_conformance() -> Vec<ProjectRepository> {
-    let repos = vec![
-        "rust-lang/rust",
-        "rust-lang-nursery/highfive",
-        "rust-lang-nursery/rustfmt",
-    ];
+#[derive(Serialize, Deserialize)]
+pub struct ConformanceReport {
+    pub repositories: Vec<ProjectRepository>,
+    created_on: u64,
+}
+
+impl ConformanceReport {
+    fn new(repositories: Vec<ProjectRepository>) -> ConformanceReport {
+        ConformanceReport {
+            repositories,
+            created_on: SystemTime::now()
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+        }
+    }
+}
+
+pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
     let urlify = |r| {
         format!(
             "https://raw.githubusercontent.com/{}/master/CODE_OF_CONDUCT.md",
@@ -95,13 +125,25 @@ pub fn check_repository_conformance() -> Vec<ProjectRepository> {
         )
     };
 
-    repos
+    let repositories_conformance = repos
         .iter()
         .map(|r| (r, urlify(r)))
-        .map(|(r, u)| match fetch(&u) == *EXPECTED_SATELLITE {
-            true => (r, u, ConductStatus::Correct),
-            false => (r, u, ConductStatus::Incorrect),
+        .map(|(r, u)| match fetch(&u) {
+            Err(e) => match e {
+                reqwest::StatusCode::NotFound => (r, u, ConductStatus::Missing),
+                _ => (r, u, ConductStatus::Unknown),
+            },
+            Ok(t) => match t == *EXPECTED_SATELLITE {
+                true => (r, u, ConductStatus::Correct),
+                false => (r, u, ConductStatus::Incorrect),
+            },
         })
         .map(|(r, u, s)| ProjectRepository::new(s, u, r.to_string()))
-        .collect()
+        .collect();
+    ConformanceReport::new(repositories_conformance)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Repository {
+    name: String,
 }
