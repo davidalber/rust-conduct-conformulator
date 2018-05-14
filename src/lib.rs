@@ -18,12 +18,7 @@ pub const RUST_WWW_CODE_OF_CONDUCT: &str =
 
 lazy_static! {
     pub static ref BASE: String = fetch_raw(RUST_WWW_CODE_OF_CONDUCT, None).unwrap();
-}
-lazy_static! {
     pub static ref EXPECTED_SATELLITE: String = make_expected_satellite();
-}
-
-lazy_static! {
     pub static ref GITHUB_KEY: Option<String> = get_api_key();
 }
 
