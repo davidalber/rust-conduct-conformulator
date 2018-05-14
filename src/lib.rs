@@ -8,6 +8,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+use reqwest::header::{Accept, Authorization, qitem};
 use rayon::prelude::*;
 use std::time::SystemTime;
 
@@ -15,14 +16,25 @@ pub const RUST_WWW_CODE_OF_CONDUCT: &str =
     "https://raw.githubusercontent.com/rust-lang/rust-www/master/en-US/conduct.md";
 
 lazy_static! {
-    pub static ref BASE: String = fetch(RUST_WWW_CODE_OF_CONDUCT).unwrap();
+    pub static ref BASE: String = fetch_raw(RUST_WWW_CODE_OF_CONDUCT, None).unwrap();
 }
 lazy_static! {
     pub static ref EXPECTED_SATELLITE: String = make_expected_satellite();
 }
 
-pub fn fetch(url: &str) -> Result<String, reqwest::StatusCode> {
-    let mut resp = reqwest::get(url).unwrap();
+const GITHUB_ACCESS_TOKEN: &str = "token AUTH_TOKEN!";
+
+pub fn fetch(url: &str, accept_header: Option<&str>) -> Result<reqwest::Response, reqwest::StatusCode> {
+    let client = reqwest::Client::new();
+    let mut request_builder = client.get(url);
+    if let Some(accept_header) = accept_header {
+        request_builder.header(Accept(vec![
+            qitem(accept_header.parse().unwrap()),
+        ]));
+    }
+    request_builder.header(Authorization(GITHUB_ACCESS_TOKEN.to_owned()));
+
+    let resp = request_builder.send().unwrap();
     if !resp.status().is_success() {
         return Err(resp.status());
     }
@@ -30,8 +42,31 @@ pub fn fetch(url: &str) -> Result<String, reqwest::StatusCode> {
         resp.status().is_success(),
         format!("Could not fetch {}", url)
     );
-    let body = resp.text().unwrap();
-    Ok(body)
+    Ok(resp)
+}
+
+pub fn fetch_raw(url: &str, accept_header: Option<&str>) -> Result<String, reqwest::StatusCode> {
+    let resp = fetch(url, accept_header);
+    match resp {
+        Ok(mut r) => {
+            let body = r.text().unwrap();
+            Ok(body)
+        },
+        Err(e) => Err(e)
+    }
+}
+
+pub fn fetch_json<T>(url: &str, accept_header: Option<&str>) -> Result<T, reqwest::StatusCode>
+    where for<'de> T: serde::Deserialize<'de>
+{
+    let resp = fetch(url, accept_header);
+    match resp {
+        Ok(mut r) => {
+            let ret: T = r.json().unwrap();
+            Ok(ret)
+        },
+        Err(e) => Err(e)
+    }
 }
 
 // This is a brittle function to convert the Rust WWW code of conduct into the
@@ -58,7 +93,7 @@ pub fn make_expected_satellite() -> String {
 
 pub fn get_org_repositories(org: &str) -> Vec<String> {
     let urlify = |o| format!("https://api.github.com/orgs/{}/repos", o);
-    let json: Vec<Repository> = reqwest::get(&urlify(org)).unwrap().json().unwrap();
+    let json: Vec<Repository> = fetch_json(&urlify(org), None).unwrap();
     json.into_iter()
         .map(|r| format!("{}/{}", org, r.name))
         .collect()
@@ -117,6 +152,23 @@ impl ConformanceReport {
     }
 }
 
+#[derive(Debug, Deserialize)]
+struct CommunityReport {
+    health_percentage: u8,
+}
+
+fn get_repo_community_report(repo: &str) -> Result<Option<CommunityReport>, reqwest::StatusCode> {
+    let url = format!("https://api.github.com/repos/{}/community/profile", repo);
+    let cr: Result<CommunityReport, reqwest::StatusCode> = fetch_json(&url, Some("application/vnd.github.black-panther-preview+json"));
+    match cr {
+        Err(e) => match e {
+            reqwest::StatusCode::NotFound => Ok(None),
+            _ => Err(e)
+        },
+        Ok(s) => Ok(Some(s)),
+    }
+}
+
 pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
     let urlify = |r| {
         format!(
@@ -128,7 +180,7 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
     let repositories_conformance = repos
         .par_iter()
         .map(|r| (r, urlify(r)))
-        .map(|(r, u)| match fetch(&u) {
+        .map(|(r, u)| match fetch_raw(&u, None) {
             Err(e) => match e {
                 reqwest::StatusCode::NotFound => (r, u, ConductStatus::Missing),
                 _ => (r, u, ConductStatus::Unknown),
@@ -140,6 +192,10 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
         })
         .map(|(r, u, s)| ProjectRepository::new(s, u, r.to_string()))
         .collect();
+
+    let cr: Vec<Option<CommunityReport>> = repos.par_iter().map(|r| get_repo_community_report(r).unwrap())
+        .collect();
+    println!("{:?}", cr);
     ConformanceReport::new(repositories_conformance)
 }
 
