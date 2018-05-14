@@ -1,3 +1,4 @@
+extern crate rayon;
 extern crate reqwest;
 extern crate serde;
 
@@ -7,6 +8,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+use rayon::prelude::*;
 use std::time::SystemTime;
 
 pub const RUST_WWW_CODE_OF_CONDUCT: &str =
@@ -124,7 +126,7 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
     };
 
     let repositories_conformance = repos
-        .iter()
+        .par_iter()
         .map(|r| (r, urlify(r)))
         .map(|(r, u)| match fetch(&u) {
             Err(e) => match e {
