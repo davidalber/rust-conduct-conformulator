@@ -1,3 +1,4 @@
+extern crate config;
 extern crate rayon;
 extern crate reqwest;
 extern crate serde;
@@ -22,7 +23,20 @@ lazy_static! {
     pub static ref EXPECTED_SATELLITE: String = make_expected_satellite();
 }
 
-const GITHUB_ACCESS_TOKEN: &str = "token AUTH_TOKEN!";
+lazy_static! {
+    pub static ref GITHUB_KEY: Option<String> = get_api_key();
+}
+
+fn get_api_key() -> Option<String> {
+    let mut settings = config::Config::default();
+    settings.merge(config::File::with_name("config")).is_ok();
+    let api_key = settings.get_str("github-api-key").ok();
+
+    match api_key {
+        Some(k) => Some(format!("token {}", k)),
+        None => None,
+    }
+}
 
 pub fn fetch(url: &str, accept_header: Option<&str>) -> Result<reqwest::Response, reqwest::StatusCode> {
     let client = reqwest::Client::new();
@@ -32,7 +46,9 @@ pub fn fetch(url: &str, accept_header: Option<&str>) -> Result<reqwest::Response
             qitem(accept_header.parse().unwrap()),
         ]));
     }
-    request_builder.header(Authorization(GITHUB_ACCESS_TOKEN.to_owned()));
+    if let Some(ref api_key) = *GITHUB_KEY {
+        request_builder.header(Authorization(api_key.to_owned()));
+    }
 
     let resp = request_builder.send().unwrap();
     if !resp.status().is_success() {
