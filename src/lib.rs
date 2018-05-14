@@ -9,7 +9,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
-use reqwest::header::{Accept, Authorization, qitem};
+use reqwest::header::{qitem, Accept, Authorization};
 use rayon::prelude::*;
 use std::time::SystemTime;
 
@@ -33,13 +33,14 @@ fn get_api_key() -> Option<String> {
     }
 }
 
-pub fn fetch(url: &str, accept_header: Option<&str>) -> Result<reqwest::Response, reqwest::StatusCode> {
+pub fn fetch(
+    url: &str,
+    accept_header: Option<&str>,
+) -> Result<reqwest::Response, reqwest::StatusCode> {
     let client = reqwest::Client::new();
     let mut request_builder = client.get(url);
     if let Some(accept_header) = accept_header {
-        request_builder.header(Accept(vec![
-            qitem(accept_header.parse().unwrap()),
-        ]));
+        request_builder.header(Accept(vec![qitem(accept_header.parse().unwrap())]));
     }
     if let Some(ref api_key) = *GITHUB_KEY {
         request_builder.header(Authorization(api_key.to_owned()));
@@ -62,21 +63,22 @@ pub fn fetch_raw(url: &str, accept_header: Option<&str>) -> Result<String, reqwe
         Ok(mut r) => {
             let body = r.text().unwrap();
             Ok(body)
-        },
-        Err(e) => Err(e)
+        }
+        Err(e) => Err(e),
     }
 }
 
 pub fn fetch_json<T>(url: &str, accept_header: Option<&str>) -> Result<T, reqwest::StatusCode>
-    where for<'de> T: serde::Deserialize<'de>
+where
+    for<'de> T: serde::Deserialize<'de>,
 {
     let resp = fetch(url, accept_header);
     match resp {
         Ok(mut r) => {
             let ret: T = r.json().unwrap();
             Ok(ret)
-        },
-        Err(e) => Err(e)
+        }
+        Err(e) => Err(e),
     }
 }
 
@@ -170,11 +172,14 @@ struct CommunityReport {
 
 fn get_repo_community_report(repo: &str) -> Result<Option<CommunityReport>, reqwest::StatusCode> {
     let url = format!("https://api.github.com/repos/{}/community/profile", repo);
-    let cr: Result<CommunityReport, reqwest::StatusCode> = fetch_json(&url, Some("application/vnd.github.black-panther-preview+json"));
+    let cr: Result<CommunityReport, reqwest::StatusCode> = fetch_json(
+        &url,
+        Some("application/vnd.github.black-panther-preview+json"),
+    );
     match cr {
         Err(e) => match e {
             reqwest::StatusCode::NotFound => Ok(None),
-            _ => Err(e)
+            _ => Err(e),
         },
         Ok(s) => Ok(Some(s)),
     }
@@ -204,7 +209,9 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
         .map(|(r, u, s)| ProjectRepository::new(s, u, r.to_string()))
         .collect();
 
-    let cr: Vec<Option<CommunityReport>> = repos.par_iter().map(|r| get_repo_community_report(r).unwrap())
+    let cr: Vec<Option<CommunityReport>> = repos
+        .par_iter()
+        .map(|r| get_repo_community_report(r).unwrap())
         .collect();
     println!("{:?}", cr);
     ConformanceReport::new(repositories_conformance)
