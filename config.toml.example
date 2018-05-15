@@ -1,4 +1,7 @@
 # The conformulator looks for a config.toml file. You can copy this file and
-# update its values.
+# update its values. Values in environment variables prefixed with
+# CONFORMULATOR override config file values. For example, the GitHub API key
+# can be provided via the CONFORMULATOR_GITHUB_APIKEY environment variable.
+
 [github]
 apikey = "API-KEY"
