@@ -24,8 +24,9 @@ lazy_static! {
 
 fn get_api_key() -> Option<String> {
     let mut settings = config::Config::default();
-    settings.merge(config::File::with_name("config")).is_ok();
-    let api_key = settings.get_str("github-api-key").ok();
+    settings.merge(config::File::with_name("config").required(false)).unwrap();
+    settings.merge(config::Environment::with_prefix("conformulator")).unwrap();
+    let api_key = settings.get_str("github.apikey").ok();
 
     match api_key {
         Some(k) => Some(format!("token {}", k)),
