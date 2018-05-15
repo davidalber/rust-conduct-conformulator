@@ -123,11 +123,11 @@ pub enum ConductStatus {
 #[derive(Serialize, Deserialize)]
 pub struct CodeOfConductStatus {
     pub status: ConductStatus,
-    pub url: String,
+    pub url: Option<String>,
 }
 
 impl CodeOfConductStatus {
-    fn new(status: ConductStatus, url: String) -> CodeOfConductStatus {
+    fn new(status: ConductStatus, url: Option<String>) -> CodeOfConductStatus {
         CodeOfConductStatus { status, url }
     }
 }
@@ -139,7 +139,11 @@ pub struct ProjectRepository {
 }
 
 impl ProjectRepository {
-    fn new(conduct_status: ConductStatus, conduct_url: String, name: String) -> ProjectRepository {
+    fn new(
+        conduct_status: ConductStatus,
+        conduct_url: Option<String>,
+        name: String,
+    ) -> ProjectRepository {
         ProjectRepository {
             code_of_conduct: CodeOfConductStatus::new(conduct_status, conduct_url),
             name,
@@ -198,12 +202,12 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
         .map(|r| (r, urlify(r)))
         .map(|(r, u)| match fetch_raw(&u, None) {
             Err(e) => match e {
-                reqwest::StatusCode::NotFound => (r, u, ConductStatus::Missing),
-                _ => (r, u, ConductStatus::Unknown),
+                reqwest::StatusCode::NotFound => (r, None, ConductStatus::Missing),
+                _ => (r, None, ConductStatus::Unknown),
             },
             Ok(t) => match t == *EXPECTED_SATELLITE {
-                true => (r, u, ConductStatus::Correct),
-                false => (r, u, ConductStatus::Incorrect),
+                true => (r, Some(u), ConductStatus::Correct),
+                false => (r, Some(u), ConductStatus::Incorrect),
             },
         })
         .map(|(r, u, s)| ProjectRepository::new(s, u, r.to_string()))
