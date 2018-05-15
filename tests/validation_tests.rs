@@ -56,7 +56,7 @@ fn validate_satellite_files() {
         .repositories
         .iter()
         .filter(|r| r.code_of_conduct.status != ConductStatus::Correct)
-        .map(|r| &r.code_of_conduct.url)
+        .map(|r| r.code_of_conduct.url.as_ref().unwrap())
         .map(AsRef::as_ref)
         .collect();
 
