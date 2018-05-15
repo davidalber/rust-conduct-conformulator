@@ -136,6 +136,7 @@ impl CodeOfConductStatus {
 pub struct ProjectRepository {
     pub code_of_conduct: CodeOfConductStatus,
     pub name: String,
+    pub community_report: Option<CommunityReport>,
 }
 
 impl ProjectRepository {
@@ -143,10 +144,12 @@ impl ProjectRepository {
         conduct_status: ConductStatus,
         conduct_url: Option<String>,
         name: String,
+        community_report: Option<CommunityReport>,
     ) -> ProjectRepository {
         ProjectRepository {
             code_of_conduct: CodeOfConductStatus::new(conduct_status, conduct_url),
             name,
+            community_report,
         }
     }
 }
@@ -169,8 +172,8 @@ impl ConformanceReport {
     }
 }
 
-#[derive(Debug, Deserialize)]
-struct CommunityReport {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CommunityReport {
     health_percentage: u8,
 }
 
@@ -210,14 +213,14 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
                 false => (r, Some(u), ConductStatus::Incorrect),
             },
         })
-        .map(|(r, u, s)| ProjectRepository::new(s, u, r.to_string()))
+        .zip(
+            repos
+                .par_iter()
+                .map(|r| get_repo_community_report(r).unwrap()),
+        )
+        .map(|((r, u, s), cr)| ProjectRepository::new(s, u, r.to_string(), cr))
         .collect();
 
-    let cr: Vec<Option<CommunityReport>> = repos
-        .par_iter()
-        .map(|r| get_repo_community_report(r).unwrap())
-        .collect();
-    println!("{:?}", cr);
     ConformanceReport::new(repositories_conformance)
 }
 
