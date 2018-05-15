@@ -1,0 +1,3 @@
+# The conformulator looks for a config.toml file. You can copy this file and
+# update its values.
+github-api-key = "API-KEY"
