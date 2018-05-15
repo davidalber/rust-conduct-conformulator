@@ -10,7 +10,7 @@ use code_of_conduct_conformulator::{check_repository_conformance, get_org_reposi
                                     make_expected_satellite, ConformanceReport};
 use rocket_contrib::Json;
 
-pub const ORGANIZATIONS: [&str; 2] = ["rust-lang", "rust-lang-nursery"];
+pub const ORGANIZATIONS: [&str; 3] = ["rust-lang", "rust-lang-nursery", "rust-lang-deprecated"];
 
 fn get_all_repos() -> Vec<String> {
     let mut repos: Vec<String> = Vec::new();
