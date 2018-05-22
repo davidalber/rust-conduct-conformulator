@@ -6,10 +6,11 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde_json;
 
-use code_of_conduct_conformulator::{check_repository_conformance, get_org_repositories,
-                                    make_expected_satellite, ConformanceReport};
-use rocket_contrib::Json;
+use code_of_conduct_conformulator::{
+    check_repository_conformance, get_org_repositories, make_expected_satellite, ConformanceReport,
+};
 use rocket::request::State;
+use rocket_contrib::Json;
 use std::collections::HashMap;
 use std::sync::RwLock;
 use std::time::{Duration, SystemTime};
@@ -24,7 +25,11 @@ struct CacheItem {
 
 impl CacheItem {
     fn new(val: &str, ttl: u64) -> CacheItem {
-        CacheItem { val: val.to_owned(), created_on: SystemTime::now(), ttl: Duration::new(ttl, 0) }
+        CacheItem {
+            val: val.to_owned(),
+            created_on: SystemTime::now(),
+            ttl: Duration::new(ttl, 0),
+        }
     }
 
     fn is_expired(&self) -> bool {
@@ -38,16 +43,16 @@ pub struct Cacheit {
 
 impl Cacheit {
     pub fn new() -> Cacheit {
-        Cacheit { vals: HashMap::new() }
+        Cacheit {
+            vals: HashMap::new(),
+        }
     }
 
     fn get(&self, key: &str) -> Option<String> {
         match self.vals.get(key) {
-            Some(item) => {
-                match item.is_expired() {
-                    false => Some(item.val.clone()),
-                    true => None,
-                }
+            Some(item) => match item.is_expired() {
+                false => Some(item.val.clone()),
+                true => None,
             },
             None => None,
         }
@@ -89,7 +94,10 @@ fn conformance(cacheit: State<RwLock<Cacheit>>) -> Json<ConformanceReport> {
 
     let repos = get_all_repos();
     let r = check_repository_conformance(&repos);
-    cacheit.write().unwrap().set(key, &serde_json::to_string(&r).unwrap(), 3600);
+    cacheit
+        .write()
+        .unwrap()
+        .set(key, &serde_json::to_string(&r).unwrap(), 3600);
     Json(r)
 }
 

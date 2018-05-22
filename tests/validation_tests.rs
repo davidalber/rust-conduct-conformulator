@@ -1,7 +1,8 @@
 extern crate code_of_conduct_conformulator;
 
-use code_of_conduct_conformulator::{check_repository_conformance, ConductStatus, BASE,
-                                    EXPECTED_SATELLITE, RUST_WWW_CODE_OF_CONDUCT};
+use code_of_conduct_conformulator::{
+    check_repository_conformance, ConductStatus, BASE, EXPECTED_SATELLITE, RUST_WWW_CODE_OF_CONDUCT,
+};
 
 use std::fs::File;
 use std::io::Read;

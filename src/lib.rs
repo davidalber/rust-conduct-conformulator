@@ -9,8 +9,8 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
-use reqwest::header::{qitem, Accept, Authorization};
 use rayon::prelude::*;
+use reqwest::header::{qitem, Accept, Authorization};
 use std::time::SystemTime;
 
 pub const RUST_WWW_CODE_OF_CONDUCT: &str =
@@ -24,8 +24,12 @@ lazy_static! {
 
 fn get_api_key() -> Option<String> {
     let mut settings = config::Config::default();
-    settings.merge(config::File::with_name("config").required(false)).unwrap();
-    settings.merge(config::Environment::with_prefix("conformulator")).unwrap();
+    settings
+        .merge(config::File::with_name("config").required(false))
+        .unwrap();
+    settings
+        .merge(config::Environment::with_prefix("conformulator"))
+        .unwrap();
     let api_key = settings.get_str("github.apikey").ok();
 
     match api_key {
@@ -86,7 +90,8 @@ where
 // This is a brittle function to convert the Rust WWW code of conduct into the
 // code of conduct that should be used in satellite projects.
 pub fn make_expected_satellite() -> String {
-    let mut expected: Vec<&str> = BASE.split("\n")
+    let mut expected: Vec<&str> = BASE
+        .split("\n")
         .skip_while(|l| !l.starts_with("#"))
         .map(|l| {
             if l.starts_with("[mod_team]") {
