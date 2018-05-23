@@ -84,12 +84,11 @@ fn conduct(cacheit: State<RwLock<Cacheit>>) -> String {
     r
 }
 
-#[get("/conformance")]
-fn conformance(cacheit: State<RwLock<Cacheit>>) -> Json<ConformanceReport> {
+fn get_conformance(cacheit: State<RwLock<Cacheit>>) -> ConformanceReport {
     let key = "conformance";
     if let Some(r) = cacheit.read().unwrap().get(key) {
         let r: ConformanceReport = serde_json::from_str(&r).unwrap();
-        return Json(r);
+        return r;
     }
 
     let repos = get_all_repos();
@@ -98,7 +97,12 @@ fn conformance(cacheit: State<RwLock<Cacheit>>) -> Json<ConformanceReport> {
         .write()
         .unwrap()
         .set(key, &serde_json::to_string(&r).unwrap(), 3600);
-    Json(r)
+    r
+}
+
+#[get("/conformance")]
+fn conformance(cacheit: State<RwLock<Cacheit>>) -> Json<ConformanceReport> {
+    Json(get_conformance(cacheit))
 }
 
 fn main() {
