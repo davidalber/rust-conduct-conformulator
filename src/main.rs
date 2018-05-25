@@ -10,8 +10,10 @@ use code_of_conduct_conformulator::{
     check_repository_conformance, get_org_repositories, make_expected_satellite, ConformanceReport,
 };
 use rocket::request::State;
+use rocket::response::NamedFile;
 use rocket_contrib::Json;
 use std::collections::HashMap;
+use std::path::{Path, PathBuf};
 use std::sync::RwLock;
 use std::time::{Duration, SystemTime};
 
@@ -105,9 +107,14 @@ fn conformance(cacheit: State<RwLock<Cacheit>>) -> Json<ConformanceReport> {
     Json(get_conformance(cacheit))
 }
 
+#[get("/css/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("assets/css/").join(file)).ok()
+}
+
 fn main() {
     rocket::ignite()
         .manage(RwLock::new(Cacheit::new()))
-        .mount("/", routes![conduct, conformance])
+        .mount("/", routes![conduct, conformance, files])
         .launch();
 }
