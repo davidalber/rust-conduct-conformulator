@@ -11,7 +11,7 @@ use code_of_conduct_conformulator::{
 };
 use rocket::request::State;
 use rocket::response::NamedFile;
-use rocket_contrib::Json;
+use rocket_contrib::{Json, Template};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::RwLock;
@@ -112,9 +112,16 @@ fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("assets/css/").join(file)).ok()
 }
 
+#[get("/")]
+fn index(cacheit: State<RwLock<Cacheit>>) -> Template {
+    let context = get_conformance(cacheit);
+    Template::render("index", &context)
+}
+
 fn main() {
     rocket::ignite()
         .manage(RwLock::new(Cacheit::new()))
-        .mount("/", routes![conduct, conformance, files])
+        .mount("/", routes![conduct, conformance, files, index])
+        .attach(Template::fairing())
         .launch();
 }

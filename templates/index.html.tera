@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+      <title>Conformulator</title>
+      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="/css/style.css">
+   </head>
+   <body>
+     <div class="head-row">
+       <div class="repo">Repository</div>
+       <div class="conduct">Code of Conduct Status</div>
+       <div class="community-percent">Community Score</div>
+     </div>
+     {% for repo in repositories %}
+     <div class="row">
+       <div class="repo"><a href="https://github.com/{{repo.name}}">{{repo.name}}</a></div>
+       <div class="conduct">{% if repo.code_of_conduct.status == "Correct" %}&#x1F49A{% elif repo.code_of_conduct.status == "Incorrect" %}&#x1F494{% endif %} {{repo.code_of_conduct.status}} {% if repo.code_of_conduct.url %}(<a href="{{repo.code_of_conduct.url}}">link</a>){% endif %}</div>
+       <div class="community-percent">{% if repo.community_report.health_percentage %}{{repo.community_report.health_percentage}}%{% else %}N/A{% endif %}</div>
+     </div>
+     {% endfor %}
+   </body>
+</html>
