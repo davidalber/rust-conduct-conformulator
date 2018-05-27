@@ -118,7 +118,7 @@ pub fn get_org_repositories(org: &str) -> Vec<String> {
         .collect()
 }
 
-#[derive(Serialize, Deserialize, PartialEq)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ConductStatus {
     Correct,
     Incorrect,
@@ -167,7 +167,8 @@ pub struct ConformanceReport {
 }
 
 impl ConformanceReport {
-    fn new(repositories: Vec<ProjectRepository>) -> ConformanceReport {
+    fn new(mut repositories: Vec<ProjectRepository>) -> ConformanceReport {
+        repositories.sort_by(|a, b| a.code_of_conduct.status.cmp(&b.code_of_conduct.status));
         ConformanceReport {
             repositories,
             created_on: SystemTime::now()
