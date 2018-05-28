@@ -7,6 +7,7 @@ This project aims to address the risk of fragmentation by providing cross-reposi
 These tests are intended to cover projects in the [rust-lang](https://github.com/rust-lang), [rust-lang-nursery](https://github.com/rust-lang-nursery/), and [rust-lang-deprecated](https://github.com/rust-lang-deprecated) GitHub organizations. Currently, the following code repositories are covered by the tests.
 
 - [rust-lang/rust](https://github.com/rust-lang/rust) ([code of conduct](https://github.com/rust-lang/rust/blob/master/CODE_OF_CONDUCT.md))
+- [rust-lang/rust-by-example](https://github.com/rust-lang/rust-by-example) ([code of conduct](https://github.com/rust-lang/rust-by-example/blob/master/CODE_OF_CONDUCT.md))
 - [rust-lang-nursery/highfive](https://github.com/rust-lang-nursery/highfive) ([code of conduct](https://github.com/rust-lang-nursery/highfive/blob/master/CODE_OF_CONDUCT.md))
 - [rust-lang-nursery/rustfmt](https://github.com/rust-lang-nursery/rustfmt) ([code of conduct](https://github.com/rust-lang-nursery/rustfmt/blob/master/CODE_OF_CONDUCT.md))
 

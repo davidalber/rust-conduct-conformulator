@@ -49,6 +49,7 @@ fn validate_local_satellite_file() {
 fn validate_satellite_files() {
     let repos = vec![
         "rust-lang/rust",
+        "rust-lang/rust-by-example",
         "rust-lang-nursery/highfive",
         "rust-lang-nursery/rustfmt",
     ];
