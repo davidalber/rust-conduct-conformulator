@@ -201,23 +201,26 @@ fn get_repo_community_report(repo: &str) -> Result<Option<CommunityReport>, reqw
 
 pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
     let urlify = |r| {
-        format!(
-            "https://raw.githubusercontent.com/{}/master/CODE_OF_CONDUCT.md",
-            r
+        (
+            format!(
+                "https://raw.githubusercontent.com/{}/master/CODE_OF_CONDUCT.md",
+                r
+            ),
+            format!("https://github.com/{}/blob/master/CODE_OF_CONDUCT.md", r),
         )
     };
 
     let repositories_conformance = repos
         .par_iter()
         .map(|r| (r, urlify(r)))
-        .map(|(r, u)| match fetch_raw(&u, None) {
+        .map(|(r, (u, p))| match fetch_raw(&u, None) {
             Err(e) => match e {
                 reqwest::StatusCode::NotFound => (r, None, ConductStatus::Missing),
                 _ => (r, None, ConductStatus::Unknown),
             },
             Ok(t) => match t == *EXPECTED_SATELLITE {
-                true => (r, Some(u), ConductStatus::Correct),
-                false => (r, Some(u), ConductStatus::Incorrect),
+                true => (r, Some(p), ConductStatus::Correct),
+                false => (r, Some(p), ConductStatus::Incorrect),
             },
         })
         .zip(
@@ -225,7 +228,7 @@ pub fn check_repository_conformance(repos: &Vec<String>) -> ConformanceReport {
                 .par_iter()
                 .map(|r| get_repo_community_report(r).unwrap()),
         )
-        .map(|((r, u, s), cr)| ProjectRepository::new(s, u, r.to_string(), cr))
+        .map(|((r, p, s), cr)| ProjectRepository::new(s, p, r.to_string(), cr))
         .collect();
 
     ConformanceReport::new(repositories_conformance)
