@@ -1,7 +1,5 @@
 # rust-conduct-conformulator [![Build Status](https://api.travis-ci.org/davidalber/rust-conduct-conformulator.svg)](https://travis-ci.org/davidalber/rust-conduct-conformulator)
 
-Note: the build is currently failing due to [SergioBenitez/Rocket#660](https://github.com/SergioBenitez/Rocket/issues/660).
-
 The Rust Code of Conduct is checked in to multiple repositories. This is great since it makes the Code of Conduct more ubiquitous. The downside is that copies of the Code of Conduct can become out of sync over time.
 
 This project aims to address the risk of fragmentation two ways:
