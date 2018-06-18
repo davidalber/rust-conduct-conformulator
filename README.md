@@ -4,7 +4,7 @@ The Rust Code of Conduct is checked in to multiple repositories. This is great s
 
 This project aims to address the risk of fragmentation two ways:
 1. (`cargo test`) The repository contains cross-repository integration tests that verify the [Rust site Code of Conduct](https://www.rust-lang.org/en-US/conduct.html) and copies of the Code of Conduct in specified code repositories are synchronized. A passing build badge above indicates that the codes of conduct were in sync as of the last build. Builds occur at least daily.
-1. (`cargo run`) The repository launches a web service that shows the status of the codes of conduct in all respositories in three of Rust's GitHub organziations.
+1. (`cargo run`) The repository launches a web service that shows the status of the codes of conduct in all respositories in three of Rust's GitHub organziations. An experimental deployment of this service is currently at https://rust-conduct.davidalber.net/.
 
 ## Test Details
 The integration tests are intended to cover projects in the [rust-lang](https://github.com/rust-lang), [rust-lang-nursery](https://github.com/rust-lang-nursery/), and [rust-lang-deprecated](https://github.com/rust-lang-deprecated) GitHub organizations. Currently, the following code repositories are covered by the tests.
