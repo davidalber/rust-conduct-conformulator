@@ -74,6 +74,11 @@ fn get_all_repos() -> Vec<String> {
     repos
 }
 
+#[get("/healthcheck")]
+fn healthcheck() -> Json<String> {
+    Json(String::from("ok"))
+}
+
 #[get("/conduct")]
 fn conduct(cacheit: State<RwLock<Cacheit>>) -> String {
     let key = "conduct";
@@ -121,7 +126,7 @@ fn index(cacheit: State<RwLock<Cacheit>>) -> Template {
 fn main() {
     rocket::ignite()
         .manage(RwLock::new(Cacheit::new()))
-        .mount("/", routes![conduct, conformance, files, index])
+        .mount("/", routes![conduct, conformance, files, healthcheck, index])
         .attach(Template::fairing())
         .launch();
 }
