@@ -8,13 +8,13 @@ config = "0.8.0"
 lazy_static = "1.0.0"
 rayon = "1.0.1"
 reqwest = "0.8.4"
-rocket = "0.3.13"
-rocket_codegen = "0.3.13"
+rocket = "0.3.14"
+rocket_codegen = "0.3.14"
 serde = "1.0.53"
 serde_derive = "1.0.53"
 serde_json = "1.0.17"
 
 [dependencies.rocket_contrib]
-version = "0.3.13"
+version = "0.3.14"
 default-features = false
 features = ["tera_templates", "json"]
