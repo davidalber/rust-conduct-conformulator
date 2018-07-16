@@ -29,5 +29,8 @@ By default, the service runs on port 8000.
 - http://localhost:8000/conduct returns a page containing the current correct code of conduct for installation in repositories. This is used to produce [satellite_code_of_conduct.md](satellite_code_of_conduct.md).
 - http://localhost:8000/conformance returns a JSON payload with code of conduct conformance information. That data is used to produce the index page.
 
+### Deploying
+See the deployment directory for an example deployment.
+
 ## Adding the Rust Code of Conduct to a Project
 The current correct copy of the Code of Conduct for a code repository is in [satellite_code_of_conduct.md](satellite_code_of_conduct.md). If you add that to your repository be sure to [onboard the repository](#onboarding-repositories).
