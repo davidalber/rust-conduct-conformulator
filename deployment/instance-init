@@ -9,10 +9,14 @@ packages:
   - gcc
   - libssl-dev
   - pkg-config
+  - python3-pip
 
 runcmd:
+  - 'su - ubuntu -c "git clone https://github.com/davidalber/rust-conduct-conformulator.git"'
+  - 'pip3 install virtualenv'
+  - 'su - ubuntu -c "cd ~ && virtualenv awsclienv && awsclienv/bin/pip install awscli"'
+  - 'su - ubuntu -c "source ~/awsclienv/bin/activate && cd ~/rust-conduct-conformulator/deployment && aws kms decrypt --region=us-east-1 --ciphertext-blob fileb://config.toml.secure --output text --query Plaintext | base64 --decode > ../config.toml"'
   - 'su - ubuntu -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"'
   - source $HOME/.cargo/env
   - 'su - ubuntu -c "/home/ubuntu/.cargo/bin/rustup default nightly-2018-07-14"'
-  - 'su - ubuntu -c "git clone https://github.com/davidalber/rust-conduct-conformulator.git"'
   - 'su - ubuntu -c "cd ~/rust-conduct-conformulator && /home/ubuntu/.cargo/bin/cargo build"'
