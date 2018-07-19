@@ -20,7 +20,7 @@ runcmd:
   - source $HOME/.cargo/env
   - 'su - ubuntu -c "/home/ubuntu/.cargo/bin/rustup default nightly-2018-07-16"'
   - 'su - ubuntu -c "cd ~/rust-conduct-conformulator && /home/ubuntu/.cargo/bin/cargo build"'
-  - [ cp, /home/ubuntu/rust-conduct-conformulator/conformulator.service, /etc/systemd/system ]
+  - [ cp, /home/ubuntu/rust-conduct-conformulator/deployment/conformulator.service, /etc/systemd/system ]
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, conformulator ]
   - [ systemctl, start, --no-block, conformulator ]
