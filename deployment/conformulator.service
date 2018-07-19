@@ -1,0 +1,10 @@
+[Unit]
+Description=Rust Conformulator
+
+[Service]
+User=www-data
+ExecStart=/bin/bash -c 'cd cd /home/ubuntu/rust-conduct-conformulator && exec /home/ubuntu/.cargo/bin/cargo run'
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

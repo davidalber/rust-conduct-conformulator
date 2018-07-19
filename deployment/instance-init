@@ -18,5 +18,9 @@ runcmd:
   - 'su - ubuntu -c "source ~/awsclienv/bin/activate && cd ~/rust-conduct-conformulator/deployment && aws kms decrypt --region=us-east-1 --ciphertext-blob fileb://config.toml.secure --output text --query Plaintext | base64 --decode > ../config.toml"'
   - 'su - ubuntu -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"'
   - source $HOME/.cargo/env
-  - 'su - ubuntu -c "/home/ubuntu/.cargo/bin/rustup default nightly-2018-07-14"'
+  - 'su - ubuntu -c "/home/ubuntu/.cargo/bin/rustup default nightly-2018-07-16"'
   - 'su - ubuntu -c "cd ~/rust-conduct-conformulator && /home/ubuntu/.cargo/bin/cargo build"'
+  - [ cp, /home/ubuntu/rust-conduct-conformulator/conformulator.service, /etc/systemd/system ]
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, conformulator ]
+  - [ systemctl, start, --no-block, conformulator ]
