@@ -3,7 +3,7 @@ Description=Rust Conformulator
 
 [Service]
 User=www-data
-ExecStart=/bin/bash -c 'cd /home/ubuntu/rust-conduct-conformulator && exec /home/ubuntu/.cargo/bin/cargo run'
+ExecStart=/bin/bash -c 'cd /home/ubuntu/rust-conduct-conformulator && exec target/debug/code_of_conduct_conformulator'
 Restart=on-failure
 
 [Install]
