@@ -8,6 +8,7 @@ package_update: true
 packages:
   - gcc
   - libssl-dev
+  - nginx
   - pkg-config
   - python3-pip
 
@@ -24,3 +25,9 @@ runcmd:
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, conformulator ]
   - [ systemctl, start, --no-block, conformulator ]
+  # NGINX Configuration
+  - 'openssl req -subj "/CN=sshca" -x509 -newkey rsa:4096 -nodes -keyout /etc/nginx/nginx.key -out /etc/nginx/nginx.crt -days 365'
+  - [ rm, /etc/nginx/sites-enabled/default ]
+  - [ cp, /home/ubuntu/rust-conduct-conformulator/deployment/nginx.conf, /etc/nginx/sites-available/conformulator ]
+  - [ ln, -s, /etc/nginx/sites-available/conformulator, /etc/nginx/sites-enabled ]
+  - [ systemctl, restart, --no-block, nginx ]
