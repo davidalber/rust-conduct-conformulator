@@ -2,9 +2,9 @@
    "http://www.w3.org/TR/html4/strict.dtd">
 <html>
    <head>
-      <title>Conformulator</title>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-      <link rel="stylesheet" type="text/css" href="/css/style.css">
+     <title>Conformulator</title>
+     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/css/style.css">
    </head>
    <body>
      <div class="head-row">
