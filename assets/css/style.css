@@ -1,22 +1,6 @@
 body {
   font-family: 'Roboto', sans-serif;
 }
-.head-row,.row {
-  max-width: 940px;
-  margin: 0 auto;
-}
-.row > div {
-  padding: 1em;
-}
-.head-row > div {
-  border-radius: 5px;
-  background-color: rgba(200,200,200,.5);
-  padding: 1em;
-  color: #d9480f;
-}
-.head-row,.row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
-  grid-auto-rows: minmax(30px, auto);
+.table {
+   width: 940px;
 }
