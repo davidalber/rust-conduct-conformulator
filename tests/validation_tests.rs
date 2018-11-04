@@ -51,6 +51,7 @@ fn validate_satellite_files() {
         "rust-lang/rust",
         "rust-lang/rust-by-example",
         "rust-lang-nursery/highfive",
+        "rust-lang-nursery/rust-clippy",
         "rust-lang-nursery/rustfmt",
     ];
     let conformance = check_repository_conformance(&repos.iter().map(|u| u.to_string()).collect());
