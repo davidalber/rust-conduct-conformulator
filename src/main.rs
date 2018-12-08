@@ -1,8 +1,7 @@
-#![feature(plugin)]
-#![plugin(rocket_codegen)]
+#![feature(proc_macro_hygiene, decl_macro)]
 
 extern crate code_of_conduct_conformulator;
-extern crate rocket;
+#[macro_use] extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde_json;
 
@@ -11,7 +10,8 @@ use code_of_conduct_conformulator::{
 };
 use rocket::request::State;
 use rocket::response::NamedFile;
-use rocket_contrib::{Json, Template};
+use rocket_contrib::json::Json;
+use rocket_contrib::templates::Template;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::RwLock;
